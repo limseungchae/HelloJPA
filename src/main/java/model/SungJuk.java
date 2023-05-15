@@ -14,6 +14,7 @@ public class SungJuk {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int sjno;
 
+    @Column(length = 10, nullable = false)
     private String name;
 
     private int kor;
@@ -22,10 +23,13 @@ public class SungJuk {
 
     private int mat;
 
+    @Column(nullable = true)
     private int tot;
 
+    @Column(nullable = true, precision = 5, scale = 1)
     private double avg;
 
+    @Column(length = 1)
     private String grd;
 
     private Date regdate;
