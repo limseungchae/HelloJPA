@@ -4,7 +4,7 @@
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mariadb://fullstacks.cmsyuhhb6fnz.ap-northeast-2.rds.amazonaws.com:3306/bigdata" />
-            <property name="javax.persistence.jdbc.use" value="bigdata" />
+            <property name="javax.persistence.jdbc.user" value="bigdata" />
             <property name="javax.persistence.jdbc.password" value="bigdata" />
             <property name="hibenate.dialect" value="org.hibernate.dialect.MariaDB106Dialect"/>
 
