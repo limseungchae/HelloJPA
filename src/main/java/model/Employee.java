@@ -49,19 +49,13 @@ public class Employee {
     private Integer mgrid;
 
     @Column(name = "DEPARTMENT_ID")
-    private Long deptid;
+    private Integer deptid;
 
     @ManyToOne  // 테이블 연관 관계 = 다 : 1
     @JoinColumn(name="department_id")
     // department 테이블의 id 컬럼과 조인
     private Department department;
 
-
-    public Employee(String fname, Long deptid, Date hdate) {
-        this.fname = fname;
-        this.hdate = hdate;
-        this.deptid = deptid;
-    }
 
 
     @Override
