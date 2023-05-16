@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employee")
 @Data
 public class Employee {
 
