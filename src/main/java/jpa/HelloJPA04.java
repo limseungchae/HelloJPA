@@ -1,5 +1,6 @@
 package jpa;
 
+import model.Department;
 import model.Employee;
 import model.SungJuk;
 import org.hibernate.Criteria;
@@ -9,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HelloJPA04 {
@@ -23,8 +25,8 @@ public class HelloJPA04 {
 
             // 사원 데이터 조회
             CriteriaQuery<Employee> query = cb.createQuery(Employee.class);   // 조회대상 지정
-            Root<Employee> e = query.from(Employee.class);
-            CriteriaQuery<Employee> cq = query.select(e);
+            /* Root<Employee> e = query.from(Employee.class);
+            CriteriaQuery<Employee> cq = query.select(e);*/
 
             /*List<Employee> emps = em.createQuery(cq.select(e)).getResultList();
 
@@ -33,7 +35,7 @@ public class HelloJPA04 {
 
             // 사원 데이터 조회 - 이름, 부서번호, 입사일 : multiselect
             // 컬럼 지정 : 객체,get(변수명)
-           /* CriteriaQuery<Object[]> mcq = cb.createQuery(Object[].class);
+            /* CriteriaQuery<Object[]> mcq = cb.createQuery(Object[].class);
             Root<Employee> me = mcq.from(Employee.class);
 
             mcq.multiselect(e.get("fname"), e.get("deptid"), e.get("hdate"));
@@ -71,25 +73,112 @@ public class HelloJPA04 {
                 System.out.println(emp);*/
 
             // 직책 수 조회 1
+            /*cb = em.getCriteriaBuilder();
+            query = cb.createQuery(Employee.class);
+            e = query.from(Employee.class);
+
             Expression cntJob = cb.count(e.get("jobid"));
             cq = query.select(cntJob);
             List<Employee> cnt = em.createQuery(cq).getResultList();
 
-            System.out.println(cnt);
+            System.out.println(cnt);*/
 
             // 직책 수 조회 2 : distinct
-            cq = query.select(e.get("jobid")).distinct(true);
+            /*cq = query.select(e.get("jobid")).distinct(true);
             cnt = em.createQuery(cq).getResultList();
 
-            System.out.println(cnt);
+            System.out.println(cnt)*/;
 
             // 직책 수 조회 3 : countDistinct
-            cntJob = cb.countDistinct(e.get("jobid"));
+            /*cntJob = cb.countDistinct(e.get("jobid"));
             cq = query.select(cntJob);
             cnt = em.createQuery(cq).getResultList();
 
-            System.out.println(cnt);
+            System.out.println(cnt);*/
 
+            // 그룹핑 : 직책별 최대, 최소, 평균 연봉, 직책수 조회
+            /*CriteriaBuilder gcb = em.getCriteriaBuilder();
+            CriteriaQuery<Object[]> gcq = gcb.createQuery(Object[].class);
+            Root<Employee> ge = gcq.from(Employee.class);
+
+            Expression maxSal = cb.max(ge.get("sal"));
+            Expression minSal = cb.max(ge.get("sal"));
+            Expression avgSal = cb.max(ge.get("sal"));
+            Expression cntSal = cb.max(ge.get("sal"));
+
+            gcq.multiselect(ge.get("jobid"), maxSal, minSal, avgSal, cntSal);
+            gcq.groupBy(ge.get("jobid"));
+
+            List<Object[]> items = em.createQuery(gcq).getResultList();
+
+            for (Object[] item : items)
+                System.out.println(item[0] + "/" + item[1] + "/" + item[2] + "/" + item[3]);*/
+
+            // 서브쿼리1 : 편균연봉보다 작게 받는 사원들의 이름, 여봉, 직책 조회
+            /*cb = em.getCriteriaBuilder();
+            query = cb.createQuery(Employee.class);*/
+
+            // 하위 쿼리
+            /*Root<Employee> s = query.from(Employee.class);
+            Subquery<Double> qryAsal = query.subquery(Double.class);
+            qryAsal.select( cb.avg(s.get("sal")) );*/
+
+            // 주 쿼리
+            /*Root<Employee> m = query.from(Employee.class);
+            query.select(e).where(cb.lt(m.get("sal"), qryAsal));
+            List<Employee> emps = em.createQuery(query).getResultList();
+
+            for (Employee emp : emps)
+                System.out.println(emp);*/
+
+            // 서브쿼리2 : 부서번호가 60번인 사원들의 이름, 직책, 부서명 조회
+
+
+            // join : 부서번호가 60번인 사원들의 이름, 직책, 부서명 조회
+            /*CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+            Root<Employee> e = cq.from(Employee.class);*/
+
+            // 2개의 객체를 조인함
+            /*Join<Employee, Department> jntb = e.join("department", JoinType.INNER);*/
+
+
+            // 조인 결과에서 원하는 컬럼 추출
+            /*CriteriaQuery<Object[]> jnq = cq.multiselect(
+                    e.get("fname"), e.get("jobid"), jntb.get("dname"))
+                    .where(cb.equal( e.get("deptid"), 60 ));
+
+            List<Object[]> items = em.createQuery(jnq).getResultList();
+            for(Object[] item : items)
+                System.out.println(item[0] + "/" + item[1] + "/" + item[2]);*/
+
+
+            // 제공된 이름, 직책, 연봉으로 사원 조회 : 동적 쿼리
+            // 직책이 IT_PROG 인 사원 조회
+            // 연봉이 10000이상인 사원 조회
+            // 직책이 IT_PROG이고 연봉이 6000 이상인 사원 조회
+            String fname = null;
+            String jobid = "IT_PROG";
+            Integer sal = 6000;
+
+            cb = em.getCriteriaBuilder();
+            query = cb.createQuery(Employee.class);
+            Root<Employee> e = query.from(Employee.class);
+
+            List<Predicate> predicates = new ArrayList<>();  // 조건절 저장 변수
+
+            if (fname != null)
+                predicates.add(cb.like(e.get("fname"), "%" + fname + "%"));
+            if (jobid != null)
+                predicates.add(cb.equal(e.get("jobid"), jobid));
+            if (sal != null)
+                predicates.add(cb.ge(e.get("sal"), sal));
+
+            query.where(predicates.toArray(new Predicate[0]));
+
+            List<Employee> emps = em.createQuery(query).getResultList();
+
+            for (Employee emp : emps)
+                System.out.println(emp);
 
 
 
