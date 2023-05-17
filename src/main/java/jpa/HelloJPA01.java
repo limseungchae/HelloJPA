@@ -7,7 +7,7 @@ import javax.persistence.Persistence;
 
 public class HelloJPA01 {
     public static void main(String[] args) {
-        // jpa 객체 초기화 : emf -> em -> etx
+        // jpa 객체 초기화 : emf -> em -> tx
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
