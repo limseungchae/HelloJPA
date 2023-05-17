@@ -12,7 +12,7 @@ public class SungJuk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int sjno;
+    private Long sjno;
 
     @Column(length = 10, nullable = false)
     private String name;
